@@ -5,12 +5,10 @@ const {
   getAllUserConnection,
   deleteConnection,
   superChat,
-  getAllProviders,
   getProvidersListForHomepage,
 } = require("../controllers/integrationsController");
 const { requireAuth } = require("@clerk/express");
 
-router.get("/providers", requireAuth(), getAllProviders);
 router.get("/integrations-list", getProvidersListForHomepage);
 router.post("/connect", requireAuth(), connectAccount);
 router.delete("/delete-connection/:id", requireAuth(), deleteConnection);

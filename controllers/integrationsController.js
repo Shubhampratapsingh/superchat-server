@@ -10,36 +10,6 @@ const composio = new Composio({
   provider: new VercelProvider(),
 });
 
-const getAllProviders = async (req, res) => {
-  try {
-    const { userId } = req.auth();
-    if (!userId) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
-    }
-
-    const response = await axios.get(`${INTEGRATION_BASE_URL}/auth_configs`, {
-      headers: {
-        "x-api-key": COMPOSIO_API_KEY,
-      },
-    });
-
-    res.json({
-      success: true,
-      connections: response?.data?.items || [],
-    });
-  } catch (error) {
-    console.error(
-      "Error fetching connections:",
-      error?.response?.data || error.message
-    );
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch connections",
-      details: error?.response?.data || null,
-    });
-  }
-};
-
 const connectAccount = async (req, res) => {
   try {
     const { providerId } = req.body;
@@ -168,7 +138,6 @@ const getProvidersListForHomepage = async (req, res) => {
 };
 
 module.exports = {
-  getAllProviders,
   connectAccount,
   getAllUserConnection,
   deleteConnection,
