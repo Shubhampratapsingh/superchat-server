@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@ai-sdk/groq": "^2.0.16",
+    "@ai-sdk/openai": "^2.0.68",
     "@clerk/express": "^1.7.3",
     "@composio/core": "^0.2.0",
     "@composio/mastra": "^0.2.4",
     "@mastra/core": "^0.24.1",
+    "@mastra/libsql": "^0.16.2",
+    "@mastra/memory": "^0.15.11",
     "@mastra/mongodb": "^0.14.0",
     "ai": "^5.0.95",
     "axios": "^1.12.2",

@@ -117,6 +117,7 @@ const superChat = async (req, res) => {
 
     const answer = await generateAIResponse({
       userId,
+      chatId,
       name: "Ask AI",
       instructions: `
   You are a helpful AI assistant.Answer concisely and naturally to user's question. `,

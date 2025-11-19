@@ -1,8 +1,11 @@
 const { Agent } = require("@mastra/core/agent");
 const { Composio } = require("@composio/core");
 const { MastraProvider } = require("@composio/mastra");
+const { Memory } = require("@mastra/memory");
+const { openai } = require("@ai-sdk/openai");
+const { LibSQLStore, LibSQLVector } = require("@mastra/libsql");
 const { groqModel } = require("../config/llm");
-const { LLM_MODEL } = require("../constants/shared");
+const { LLM_MODEL, LLM_EMBED_MODEL } = require("../constants/shared");
 
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 
@@ -13,11 +16,15 @@ const composio = new Composio({
 
 async function generateAIResponse({
   userId,
+  chatId,
   name = "AI Assistant",
   instructions = "",
   messages = [],
   model = LLM_MODEL,
 }) {
+  const threadId = chatId;
+  const resourceId = userId;
+
   try {
     const toolsResponse = await composio.tools.get(userId, {
       tools: ["GMAIL_SEND_EMAIL"],
@@ -56,18 +63,49 @@ async function generateAIResponse({
       return out;
     });
 
+    const memory = new Memory({
+      storage: new LibSQLStore({
+        url: process.env.TURSO_DB_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      }),
+      vector: new LibSQLVector({
+        connectionUrl: process.env.TURSO_DB_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      }),
+      embedder: openai.embedding(LLM_EMBED_MODEL),
+      options: {
+        lastMessages: 5,
+        semanticRecall: {
+          topK: 5,
+          messageRange: {
+            before: 5,
+            after: 5,
+          },
+        },
+        workingMemory: {
+          enabled: true,
+        },
+      },
+    });
+
     const chatAgent = new Agent({
       name,
       instructions,
       model: groqModel(model, { max_tokens: 500 }),
       tools: toolsList,
+      memory,
     });
 
     const formattedMessages = Array.isArray(messages)
       ? messages
       : [{ role: "user", content: messages }];
 
-    const response = await chatAgent.generate(formattedMessages);
+    const response = await chatAgent.generate(formattedMessages, {
+      memory: {
+        thread: threadId,
+        resource: resourceId,
+      },
+    });
     return response?.text || "";
   } catch (err) {
     console.error(`[generateAIResponse Error]:`, err);
