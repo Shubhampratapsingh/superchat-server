@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { Composio } = require("@composio/core");
-const { VercelProvider } = require("@composio/vercel");
+const { MastraProvider } = require("@composio/mastra");
 const { INTEGRATION_BASE_URL } = require("../constants/shared");
 const { generateAIResponse } = require("../utils/shared");
 
@@ -8,7 +8,7 @@ const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 
 const composio = new Composio({
   apiKey: COMPOSIO_API_KEY,
-  provider: new VercelProvider(),
+  provider: new MastraProvider(),
 });
 
 const connectAccount = async (req, res) => {
@@ -116,14 +116,11 @@ const superChat = async (req, res) => {
     }
 
     const answer = await generateAIResponse({
+      userId,
       name: "Ask AI",
       instructions: `
-  You are a helpful AI assistant. 
-    
-  Question: ${query}
-  
-  Answer concisely and naturally:
-    `,
+  You are a helpful AI assistant.Answer concisely and naturally to user's question. `,
+      messages: `${query}`,
     });
 
     return res.json({ query, answer });

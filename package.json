@@ -13,16 +13,16 @@
     "@ai-sdk/groq": "^2.0.16",
     "@clerk/express": "^1.7.3",
     "@composio/core": "^0.2.0",
-    "@composio/vercel": "^0.2.12",
-    "@mastra/core": "^0.16.0",
+    "@composio/mastra": "^0.2.4",
+    "@mastra/core": "^0.24.1",
     "@mastra/mongodb": "^0.14.0",
+    "ai": "^5.0.95",
     "axios": "^1.12.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.10.1",
     "nodemon": "^3.1.9",
-    "uuid": "^11.1.0",
-    "zod": "^4.1.12"
+    "uuid": "^11.1.0"
   }
 }
