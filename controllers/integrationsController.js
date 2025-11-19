@@ -2,6 +2,7 @@ const axios = require("axios");
 const { Composio } = require("@composio/core");
 const { VercelProvider } = require("@composio/vercel");
 const { INTEGRATION_BASE_URL } = require("../constants/shared");
+const { generateAIResponse } = require("../utils/shared");
 
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 
@@ -103,7 +104,36 @@ const deleteConnection = async (req, res) => {
   }
 };
 
-const superChat = async (req, res) => {};
+const superChat = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const { chatId, query } = req.body;
+
+    if (!chatId || !userId || !query) {
+      return res
+        .status(400)
+        .json({ error: "chatId and userId and query are required" });
+    }
+
+    const answer = await generateAIResponse({
+      name: "Ask AI",
+      instructions: `
+  You are a helpful AI assistant. 
+    
+  Question: ${query}
+  
+  Answer concisely and naturally:
+    `,
+    });
+
+    return res.json({ query, answer });
+  } catch (error) {
+    console.error("AI Chat Error:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to get AI answer", detail: error.message });
+  }
+};
 
 const getProvidersListForHomepage = async (req, res) => {
   try {

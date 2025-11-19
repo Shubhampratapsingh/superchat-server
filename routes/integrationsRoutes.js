@@ -13,6 +13,6 @@ router.get("/integrations-list", getProvidersListForHomepage);
 router.post("/connect", requireAuth(), connectAccount);
 router.delete("/delete-connection/:id", requireAuth(), deleteConnection);
 router.get("/connections", requireAuth(), getAllUserConnection);
-router.post("/superchat", requireAuth(), superChat);
+router.post("/chat", requireAuth(), superChat);
 
 module.exports = router;
